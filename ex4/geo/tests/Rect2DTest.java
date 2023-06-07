@@ -168,7 +168,6 @@ public class Rect2DTest {
         // scale and test:
         rec.scale(pm7__m9, -0.6);
         assertFalse(equals(rec.points(), exp));
-        System.out.println(rec);
         exp = new Point_2D[]{pm9_4599__m18_1199, pm14_9199__m18_1199, pm14_9199__m13_44, pm9_4599__m13_44};
         assertTrue(equals(rec.points(), exp));
     }

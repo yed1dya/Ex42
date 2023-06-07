@@ -36,7 +36,7 @@ public class Ex4 implements Ex4_GUI {
 	public void init(GUI_Shape_Collection s) {
 		if(s==null) {_shapes = new ShapeCollection();
 		}
-		else {_shapes = s;}// //shou,ld be s.copy();}
+		else {_shapes = s;} //should be s.copy();}
 		_gs = null;
 		_color = Color.blue;
 		_fill = false;
@@ -176,7 +176,7 @@ public class Ex4 implements Ex4_GUI {
 			double x1 = StdDraw_Ex4.mouseX();
 			double y1 = StdDraw_Ex4.mouseY();
 			GeoShape gs = null;
-		//	System.out.println("M: "+x1+","+y1);
+			System.out.println("M: "+x1+","+y1);
 			Point_2D p = new Point_2D(x1,y1);
 			if(_mode.equals("Circle")) {
 				double r = _p1.distance(p);

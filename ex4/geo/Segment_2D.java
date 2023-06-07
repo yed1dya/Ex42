@@ -123,4 +123,9 @@ public class Segment_2D implements GeoShape{
 		this._p1.rotate(center, angleDegrees);
 		this._p2.rotate(center, angleDegrees);
 	}
+
+	@Override
+	public String toString(){
+		return _p1+", "+_p2;
+	}
 }

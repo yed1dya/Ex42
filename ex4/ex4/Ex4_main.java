@@ -13,7 +13,7 @@ public class Ex4_main {
 
 	public static void main(String[] args) {
 		simpleShapes();
-	//	loadDemo();
+		loadDemo();
 	}
 
 	// Two simple GeoShapes

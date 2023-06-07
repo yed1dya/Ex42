@@ -1,15 +1,14 @@
+// 207404998
 package exe.ex4.gui;
+
+import exe.ex4.geo.GeoShape;
+import java.awt.*;
+
 /**
  * This class implements the GUI_shape.
  * Ex4: you should implement this class!
  * @author I2CS
  */
-
-import exe.ex4.geo.GeoShape;
-
-import java.awt.*;
-
-
 
 public class GUIShape implements GUI_Shape{
 	private GeoShape _g = null;
@@ -68,8 +67,7 @@ public class GUIShape implements GUI_Shape{
 
 	@Override
 	public GUI_Shape copy() {
-		GUI_Shape cp = new GUIShape(this);
-		return cp;
+		return new GUIShape(this);
 	}
 	@Override
 	public String toString() {

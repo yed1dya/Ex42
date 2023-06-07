@@ -121,13 +121,37 @@ public class Polygon2DTest {
         assertFalse(poly.contains(p7__4));
         poly.add(new Point_2D(2,8));
         poly.add(new Point_2D(3,8));
+        poly.add(new Point_2D(3,7));
         assertTrue(poly.contains(new Point_2D(3,7)));
-        //assertFalse(poly.contains(new Point_2D(1,7)));
+        assertFalse(poly.contains(new Point_2D(1,7)));
+        assertFalse(poly.contains(new Point_2D(1, 8)));
         poly = new Polygon_2D();
         for (Point_2D p : pointsArr5){
             poly.add(p);
         }
-        //assertFalse(poly.contains(new Point_2D(6.5,6)));
+        assertFalse(poly.contains(new Point_2D(5,6)));
+
+        Polygon_2D poly2 = new Polygon_2D();
+        poly2.add(new Point_2D(1,1));
+        poly2.add(new Point_2D(1,2));
+        poly2.add(new Point_2D(2,2));
+        poly2.add(new Point_2D(2,3));
+        poly2.add(new Point_2D(3,3));
+        poly2.add(new Point_2D(3,1));
+        assertFalse(poly2.contains(new Point_2D(1,3)));
+
+        Polygon_2D poly3 = new Polygon_2D();
+        poly3.add(new Point_2D(1,1));
+        poly3.add(new Point_2D(1,4));
+        poly3.add(new Point_2D(2,4));
+        poly3.add(new Point_2D(2,2));
+        poly3.add(new Point_2D(3,2));
+        poly3.add(new Point_2D(3,3));
+        poly3.add(new Point_2D(4,3));
+        poly3.add(new Point_2D(4,1));
+        assertTrue(poly3.contains(new Point_2D(2.5,2)));
+        assertFalse(poly3.contains(new Point_2D(2.5,3)));
+        assertFalse(poly3.contains(new Point_2D(2.5,2.999999)));
     }
 
     @Test
@@ -186,7 +210,7 @@ public class Polygon2DTest {
         poly.translate(p3_7__m5_8);
         assertTrue(equals(poly.getAllPoints(), pointsArr4));
     }
-    
+
     @Test
     // tests the copy function:
     public void testCopy(){

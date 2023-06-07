@@ -88,7 +88,7 @@ public class Triangle_2D implements GeoShape{
 				tri2 = new Triangle_2D(p2, p3, ot),
 				tri3 = new Triangle_2D(p3, p1, ot);
 		double allArea = tri1.area()+tri2.area()+tri3.area(),
-			origArea = this.area();
+				origArea = this.area();
 		return (Math.abs(allArea-origArea)<EPS1);
 	}
 
@@ -159,5 +159,10 @@ public class Triangle_2D implements GeoShape{
 		this._p1.rotate(center, angleDegrees);
 		this._p2.rotate(center, angleDegrees);
 		this._p3.rotate(center, angleDegrees);
+	}
+
+	@Override
+	public String toString(){
+		return this._p1+", "+this._p2+", "+this._p3;
 	}
 }

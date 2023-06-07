@@ -7,6 +7,8 @@ package exe.ex4.geo;
  * uses distance function from Point_2D as well.
  */
 
+import java.util.Arrays;
+
 /**
  * This class represents a 2D axis parallel rectangle.
  * Ex4: you should implement this class!
@@ -136,6 +138,16 @@ public class Rect_2D implements GeoShape {
 		this._p2.rotate(center, angleDegrees);
 		this._p3.rotate(center, angleDegrees);
 		this._p4.rotate(center, angleDegrees);
+	}
+
+	/**
+	 *
+	 * @return a string representing the rectangle
+	 */
+	@Override
+	public String toString(){
+		String ans = Arrays.toString(this.points());
+		return ans.substring(1, ans.length()-1);
 	}
 
 	/**

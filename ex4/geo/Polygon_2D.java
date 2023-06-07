@@ -1,6 +1,7 @@
 // 207404997
 package exe.ex4.geo;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
  * translate, scale, rotate functions utilize the methods in the Point_2D class;
@@ -51,14 +52,8 @@ public class Polygon_2D implements GeoShape{
 	 */
 	@Override
 	public String toString() {
-		StringBuilder ans = new StringBuilder();
-		for (Point_2D p : this._points){
-			ans.append("(").append(p.toString()).append(")").append(", ");
-		}
-		if (ans.toString().endsWith(", ")){
-			ans = new StringBuilder(ans.substring(0, ans.length() - 2));
-		}
-		return ans.toString();
+		String ans = Arrays.toString(this.getAllPoints());
+		return ans.substring(1, ans.length()-1);
 	}
 
 	/**
@@ -69,25 +64,48 @@ public class Polygon_2D implements GeoShape{
 	@Override
 	public boolean contains(Point_2D ot) {
 		// check if the point is relevant - if it's inside a 'box' surrounding the polygon
-		if(!isInBox(this, ot)){
+		if(!isInBox(this, ot) || this._points.size()==0){
 			return false;
 		}
-		Segment_2D[] lines = lines(this.getAllPoints());
+		// if polygon is 1 point:
+		Point_2D[] points = this.getAllPoints();
+		if(points.length==1){
+			return ot.close2equals(points[0], 0.001);
+		}
+		// if polygon is 2 points:
+		if(this._points.size()==2){
+			return new Segment_2D(points[0], points[1]).contains(ot);
+		}
+		Segment_2D[] lines = lines(points);
 		// check if point is on one of the lines:
 		for (Segment_2D line : lines) {
 			if (line.contains(ot)) {
 				return true;
 			}
 		}
-		int count=0;
+		int countR0=0, countL0=0, countRP1=0, countRN1=0;
 		// check how many times the line from query point will intersect with the lines of the polygon:
 		for (Segment_2D line : lines) {
-			if (intersects(ot, line)) {
-				count++;
+			if (intersectsRightZero(ot, line)) {
+				countR0++;
+			}
+			if (intersectsLeftZero(ot, line)) {
+				countL0++;
+			}
+			if (intersectsRightPositiveOne(ot, line)){
+				countRP1++;
+			}
+			if (intersectsRightNegativeOne(ot, line)){
+				countRN1++;
 			}
 		}
+		if(countR0==0 || countL0==0 || countRP1==0 || countRN1==0){
+			return false;
+		}
 		// if intersects odd amount of times, point is inside:
-		return count % 2 == 1;
+		else {
+			return !(countR0%2==0 && countL0%2==0 && countRP1%2==0 && countRN1%2==0);
+		}
 	}
 
 	/**
@@ -96,7 +114,7 @@ public class Polygon_2D implements GeoShape{
 	 * @param s a segment of the polynom
 	 * @return true if a line from the point (parallel to x-axis) intersects the segment
 	 */
-	private static boolean intersects(Point_2D p, Segment_2D s){
+	private static boolean intersectsRightZero(Point_2D p, Segment_2D s){
 		double x1=s.get_p1().x(), y1=s.get_p1().y(), x2=s.get_p2().x(), y2=s.get_p2().y(), pX=p.x(), pY=p.y();
 		// if segment is vertical; check if it's to the right of query point,
 		// and not all above or below the y value of the query point:
@@ -104,20 +122,77 @@ public class Polygon_2D implements GeoShape{
 			return pX<=x1 && pY>=Math.min(y1,y2) && pY<=Math.max(y1,y2);
 		}
 		else{
+			if(y1==y2){
+				return pY==y1 && pX<=Math.max(x1,x2);
+			}
 			// if segment slope isn't 0; find its equation;
 			// find x value of intersection between line and segment;
 			// check if x value is to the right of query point and between x values of segment:
 			double m = (y2-y1)/(x2-x1);
-			if(m!=0){
-				double x = (pY - y1)/m + x1;
+			double x = (pY - y1)/m + x1;
+			return x>=pX && x>=Math.min(x1,x2) && x<=Math.max(x1,x2);
+		}
+	}
+
+	private static boolean intersectsLeftZero(Point_2D p, Segment_2D s){
+		double x1=s.get_p1().x(), y1=s.get_p1().y(), x2=s.get_p2().x(), y2=s.get_p2().y(), pX=p.x(), pY=p.y();
+		// if segment is vertical; check if it's to the right of query point,
+		// and not all above or below the y value of the query point:
+		if(x1==x2){
+			return pX>=x1 && pY>=Math.min(y1,y2) && pY<=Math.max(y1,y2);
+		}
+		else{
+			if(y1==y2){
+				return pY==y1 && pX>=Math.min(x1,x2);
+			}
+			// if segment slope isn't 0; find its equation;
+			// find x value of intersection between line and segment;
+			// check if x value is to the right of query point and between x values of segment:
+			double m = (y2-y1)/(x2-x1);
+			double x = (pY - y1)/m + x1;
+			return x<=pX && x>=Math.min(x1,x2) && x<=Math.max(x1,x2);
+		}
+	}
+
+	private static boolean intersectsRightPositiveOne(Point_2D p, Segment_2D s){
+		double x1=s.get_p1().x(), y1=s.get_p1().y(), x2=s.get_p2().x(), y2=s.get_p2().y(), pX=p.x(), pY=p.y();
+		// if segment is vertical; check if it's to the right of query point,
+		// and that the line will intersect the segment:
+		if(x1==x2){
+			double d = Math.abs(pX-x1);
+			return pX<=x1 && pY+d>=Math.min(y1,y2) && pY+d<=Math.max(y1,y2);
+		}
+		else{
+			// if segment slope isn't 1; find its equation;
+			// find x value of intersection between line and segment;
+			// check if x value is to the right of query point and between x values of segment:
+			double m = (y2-y1)/(x2-x1);
+			if(m!=1){
+				double x = (y1 - m*x1 + pX - pY)/(1-m);
 				return x>=pX && x>=Math.min(x1,x2) && x<=Math.max(x1,x2);
 			}
-			// if segment slope is 0;
-			// check if y values of segment and line are equal,
-			// and segment is to the right of query point:
-			else{
-				return pY==y1 && pX<=Math.min(x1,x2);
+			return false;
+		}
+	}
+
+	private static boolean intersectsRightNegativeOne(Point_2D p, Segment_2D s){
+		double x1=s.get_p1().x(), y1=s.get_p1().y(), x2=s.get_p2().x(), y2=s.get_p2().y(), pX=p.x(), pY=p.y();
+		// if segment is vertical; check if it's to the right of query point,
+		// and that the line will intersect the segment:
+		if(x1==x2){
+			double d = Math.abs(pX-x1);
+			return pX<=x1 && pY-d>=Math.min(y1,y2) && pY-d<=Math.max(y1,y2);
+		}
+		else{
+			// if segment slope isn't -1; find its equation;
+			// find x value of intersection between line and segment;
+			// check if x value is to the right of query point and between x values of segment:
+			double m = (y2-y1)/(x2-x1);
+			if(m!=-1){
+				double x = (y1 - m*x1 - pX - pY)/(-1-m);
+				return x>=pX && x>=Math.min(x1,x2) && x<=Math.max(x1,x2);
 			}
+			return false;
 		}
 	}
 
@@ -149,7 +224,7 @@ public class Polygon_2D implements GeoShape{
 	 * @return true if the point is in the 'box' surrounding the polygon
 	 */
 	private static boolean isInBox(Polygon_2D poly, Point_2D p){
-		return p.y()<=maxY(poly) && p.y()>=minY(poly) && p.x()<=maxX(poly) && p.x()>=minX(poly);
+		return p.y()<maxY(poly) && p.y()>minY(poly) && p.x()<maxX(poly) && p.x()>minX(poly);
 	}
 
 	/**
