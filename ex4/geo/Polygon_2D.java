@@ -53,7 +53,7 @@ public class Polygon_2D implements GeoShape{
 	@Override
 	public String toString() {
 		String ans = Arrays.toString(this.getAllPoints());
-		return ans.substring(1, ans.length()-1);
+		return "Polygon_2D, "+ans.substring(1, ans.length()-1);
 	}
 
 	/**
@@ -99,10 +99,11 @@ public class Polygon_2D implements GeoShape{
 				countRN1++;
 			}
 		}
+		// if any one of the lines intersects with the polygon zero times, it's outside the polygon:
 		if(countR0==0 || countL0==0 || countRP1==0 || countRN1==0){
 			return false;
 		}
-		// if intersects odd amount of times, point is inside:
+		// if not all the lines intersect an even number of times:
 		else {
 			return !(countR0%2==0 && countL0%2==0 && countRP1%2==0 && countRN1%2==0);
 		}
@@ -112,7 +113,7 @@ public class Polygon_2D implements GeoShape{
 	 * helper function for contains:
 	 * @param p query point
 	 * @param s a segment of the polynom
-	 * @return true if a line from the point (parallel to x-axis) intersects the segment
+	 * @return true if a line from the point (parallel to x-axis, to the right) intersects the segment
 	 */
 	private static boolean intersectsRightZero(Point_2D p, Segment_2D s){
 		double x1=s.get_p1().x(), y1=s.get_p1().y(), x2=s.get_p2().x(), y2=s.get_p2().y(), pX=p.x(), pY=p.y();
@@ -134,6 +135,12 @@ public class Polygon_2D implements GeoShape{
 		}
 	}
 
+	/**
+	 * helper function for contains:
+	 * @param p query point
+	 * @param s a segment of the polynom
+	 * @return true if a line from the point (parallel to x-axis, to the left) intersects the segment
+	 */
 	private static boolean intersectsLeftZero(Point_2D p, Segment_2D s){
 		double x1=s.get_p1().x(), y1=s.get_p1().y(), x2=s.get_p2().x(), y2=s.get_p2().y(), pX=p.x(), pY=p.y();
 		// if segment is vertical; check if it's to the right of query point,
@@ -154,6 +161,12 @@ public class Polygon_2D implements GeoShape{
 		}
 	}
 
+	/**
+	 * helper function for contains:
+	 * @param p query point
+	 * @param s a segment of the polynom
+	 * @return true if a line from the point (y=x+c, to the right) intersects the segment
+	 */
 	private static boolean intersectsRightPositiveOne(Point_2D p, Segment_2D s){
 		double x1=s.get_p1().x(), y1=s.get_p1().y(), x2=s.get_p2().x(), y2=s.get_p2().y(), pX=p.x(), pY=p.y();
 		// if segment is vertical; check if it's to the right of query point,
@@ -175,6 +188,12 @@ public class Polygon_2D implements GeoShape{
 		}
 	}
 
+	/**
+	 * helper function for contains:
+	 * @param p query point
+	 * @param s a segment of the polynom
+	 * @return true if a line from the point (y=-x+c, to the right) intersects the segment
+	 */
 	private static boolean intersectsRightNegativeOne(Point_2D p, Segment_2D s){
 		double x1=s.get_p1().x(), y1=s.get_p1().y(), x2=s.get_p2().x(), y2=s.get_p2().y(), pX=p.x(), pY=p.y();
 		// if segment is vertical; check if it's to the right of query point,

@@ -54,7 +54,7 @@ public class Triangle_2D implements GeoShape{
 	 * @return the triangle's _p1
 	 */
 	private Point_2D get_p1(){
-		return this._p1;
+		return new Point_2D(this._p1);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class Triangle_2D implements GeoShape{
 	 * @return the triangle's _p2
 	 */
 	private Point_2D get_p2(){
-		return this._p2;
+		return new Point_2D(this._p2);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class Triangle_2D implements GeoShape{
 	 * @return the triangle's _p3
 	 */
 	private Point_2D get_p3(){
-		return this._p3;
+		return new Point_2D(this._p3);
 	}
 
 	/**
@@ -163,6 +163,6 @@ public class Triangle_2D implements GeoShape{
 
 	@Override
 	public String toString(){
-		return this._p1+", "+this._p2+", "+this._p3;
+		return "Triangle_2D, "+this._p1+", "+this._p2+", "+this._p3;
 	}
 }

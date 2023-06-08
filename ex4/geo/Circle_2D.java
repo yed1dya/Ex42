@@ -51,7 +51,7 @@ public class Circle_2D implements GeoShape{
 	@Override
 	public String toString()
 	{
-		return _center.toString()+", "+_radius;
+		return "Circle_2D, "+_center.toString()+", "+_radius;
 	}
 
 	/**

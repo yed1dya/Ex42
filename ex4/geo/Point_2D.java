@@ -92,8 +92,8 @@ public class Point_2D {
 		double dy = y()-cen.y();
 		dx *= ratio;
 		dy *= ratio;
-		_x = dx+cen.x();
-		_y = dy+cen.y();
+		this._x = dx+cen.x();
+		this._y = dy+cen.y();
 		/////////////////////////////////////
 	}
 	public void rotate(Point_2D cen, double angleDegrees) {

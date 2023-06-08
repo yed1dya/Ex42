@@ -68,7 +68,7 @@ public class ShapeCollection implements GUI_Shape_Collection{
 	@Override
 	public void sort(Comparator<GUI_Shape> comp) {
 		//////////add your code below ///////////
-		this._shapes.sort(comp);
+
 		//////////////////////////////////////////
 	}
 
@@ -84,16 +84,7 @@ public class ShapeCollection implements GUI_Shape_Collection{
 	@Override
 	public void save(String file) {
 		//////////add your code below ///////////
-		try {
-			FileWriter myWriter = new FileWriter(file);
-			for(GUI_Shape shape : this._shapes){
-				myWriter.write(shape.toString() + "\n");
-			}
-			myWriter.close();
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+
 		//////////////////////////////////////////
 	}
 

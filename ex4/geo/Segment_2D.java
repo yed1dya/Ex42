@@ -126,6 +126,6 @@ public class Segment_2D implements GeoShape{
 
 	@Override
 	public String toString(){
-		return _p1+", "+_p2;
+		return "Segment_2D, "+_p1+","+_p2;
 	}
 }
