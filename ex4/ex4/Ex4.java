@@ -9,6 +9,7 @@ import exe.ex4.gui.StdDraw_Ex4;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -21,14 +22,17 @@ import java.util.ArrayList;
  */
 public class Ex4 implements Ex4_GUI {
 	private  GUI_Shape_Collection _shapes = new ShapeCollection();
-	private GUI_Shape _gs;
+	private GUI_Shape _gs, _seg;
 	private  Color _color = Color.blue;
 	private  boolean _fill = false;
 	private  String _mode = "";
 	private Point_2D _p1, _rotateCenter;
 	private Polygon_2D _poly;
+	private Rect_2D _rect;
 	private static int _tag=0;
 	private static Ex4 _winEx4 = null;
+
+	boolean printMode = false, printDegrees = true, printRightClick = false, printAll = true;
 
 	private Ex4() {
 		init(null);
@@ -83,6 +87,7 @@ public class Ex4 implements Ex4_GUI {
 			drawShape(sh);
 		}
 		if(_gs!=null) {drawShape(_gs);}
+		if(_seg!=null) {drawShape(_seg);}
 		StdDraw_Ex4.show();
 	}
 	private static void drawShape(GUI_Shape g) {
@@ -119,8 +124,22 @@ public class Ex4 implements Ex4_GUI {
 				StdDraw_Ex4.circle(cen.x(), cen.y(), rad);
 			}
 		}
-
-
+		if(gs instanceof Segment_2D) {
+			Segment_2D s = (Segment_2D) gs;
+			Point_2D p1 = s.get_p1(), p2 = s.get_p2();
+			StdDraw_Ex4.line(p1.x(), p1.y(), p2.x(), p2.y());
+		}
+		if(gs instanceof Rect_2D) {
+			Rect_2D r = (Rect_2D)gs;
+			Point_2D[] rp = r.points();
+			double[] x = {rp[0].x(), rp[1].x(), rp[2].x(), rp[3].x()},
+					y = {rp[0].y(), rp[1].y(), rp[2].y(), rp[3].y()};
+			if(isFill) {
+				StdDraw_Ex4.filledPolygon(x, y);
+            }else {
+				StdDraw_Ex4.polygon(x, y);
+			}
+		}
 	}
 	private void setColor(Color c) {
 		for(int i=0;i<_shapes.size();i++) {
@@ -155,7 +174,20 @@ public class Ex4 implements Ex4_GUI {
 
 
 	public void mouseClicked(Point_2D p) {
-		System.out.println("Mode: "+_mode+"  "+p);
+		if(printMode || printAll){System.out.println("Mode: "+_mode+"  "+p);}
+		_seg=null;
+		if(_mode.equals("Segment")) {
+			if(_gs==null) {
+				_p1 = new Point_2D(p);
+			}
+			else {
+				_gs.setColor(_color);
+				_gs.setFilled(true);
+				_shapes.add(_gs);
+				_gs = null;
+				_p1 = null;
+			}
+		}
 		if(_mode.equals("Circle")) {
 			if(_gs==null) {
 				_p1 = new Point_2D(p);
@@ -166,6 +198,42 @@ public class Ex4 implements Ex4_GUI {
 				_shapes.add(_gs);
 				_gs = null;
 				_p1 = null;
+			}
+		}
+		if(_mode.equals("Rect")) {
+			if(_gs==null) {
+				_p1 = new Point_2D(p);
+			}
+			else {
+				_rect = new Rect_2D(_p1, p);
+				_gs.setColor(_color);
+				_gs.setFilled(_fill);
+				_gs = new GUIShape(_rect, this._fill, this._color, _tag);
+				System.out.println("rect: "+_rect);
+				System.out.println("gs: "+_gs);
+				_tag++;
+				this._shapes.add(_gs);
+				_p1 = null;
+				_gs = null;
+			}
+		}
+		if(_mode.equals("Triangle")) {
+			if(_gs==null) {
+				_poly = new Polygon_2D();
+				_poly.add(p);
+				_p1 = new Point_2D(p);
+				_gs = new GUIShape(_poly, this._fill, this._color, _tag);
+			}
+			else {
+				_poly.add(p);
+				if(_poly.getAllPoints().length==3) {
+					_gs = new GUIShape(_poly, this._fill, this._color, _tag);
+					_tag++;
+					this._shapes.add(_gs);
+					_p1 = null;
+					_gs = null;
+				}
+				drawShapes();
 			}
 		}
 		if(_mode.equals("Polygon")) {
@@ -206,7 +274,6 @@ public class Ex4 implements Ex4_GUI {
 				_p1 = null;
 			}
 		}
-		// TODO fix this
 		if (_mode.equals("Rotate")){
 			if(_p1==null){
 				_p1 = new Point_2D(p);
@@ -218,23 +285,21 @@ public class Ex4 implements Ex4_GUI {
 				double x = _p1.x(), y = _p1.y();
 				if(x==0){
 					if(y>0){
-						degrees = 90;
-					}else {
-						degrees = -90;
+						degrees = Math.PI/2;
+					}else if(y<0){
+						degrees = (3*Math.PI)/2;
+					}else{
+						degrees = 0;
 					}
 				}
 				else {
-					if(x<0){
-						degrees = Math.atan(y/x)+180;
-					}
-					else if(y<0) {
-						degrees = Math.atan(y/x)+360;
-					}
-					else {
-                        degrees = Math.atan(y/x);
-                    }
+					degrees = Math.atan2(y,x);
 				}
-				System.out.println(degrees);
+				degrees = Math.toDegrees(degrees);
+				if (degrees<0){
+					degrees += 360;
+				}
+				if(printDegrees || printAll){System.out.println("degrees: "+degrees);}
 				rotate(degrees);
 				_p1 = null;
 			}
@@ -331,7 +396,7 @@ public class Ex4 implements Ex4_GUI {
 	}
 
 	public void mouseRightClicked(Point_2D p) {
-		System.out.println("right click!");
+		if(printRightClick || printAll){System.out.println("right click!");}
 		if(_mode.equals("Polygon")) {
 			_poly.add(p);
 			_gs = new GUIShape(_poly, this._fill, this._color, _tag);
@@ -346,18 +411,28 @@ public class Ex4 implements Ex4_GUI {
 		if(_p1!=null) {
 			double x1 = StdDraw_Ex4.mouseX();
 			double y1 = StdDraw_Ex4.mouseY();
-			GeoShape gs = null;
-			//System.out.println("M: "+x1+","+y1);
 			Point_2D p = new Point_2D(x1,y1);
+			GeoShape gs = null;
+			if(!_mode.equals("Circle")){
+				GeoShape seg = new Segment_2D(_p1,p);
+				_seg = new GUIShape(seg,false, Color.pink, 0);
+			}
+			//System.out.println("M: "+x1+","+y1);
 			if(_mode.equals("Circle")) {
 				double r = _p1.distance(p);
 				gs = new Circle_2D(_p1,r);
 			}
 			if(_mode.equals("Polygon")) {
 				Polygon_2D poly = (Polygon_2D) _gs.getShape();
-				poly.add(new Point_2D(x1,y1));
 				gs = new Polygon_2D(poly);
+				poly.add(p);
 			}
+			if(_mode.equals("Segment")) {
+				gs = new Segment_2D(_p1,p);
+            }
+			if(_mode.equals("Rect")) {
+                gs = new Rect_2D(_p1,p);
+            }
 			_gs = new GUIShape(gs,false, Color.pink, 0);
 			drawShapes();
 		}
