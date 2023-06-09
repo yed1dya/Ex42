@@ -33,22 +33,18 @@ public class ShapeCollection implements GUI_Shape_Collection{
 
 	@Override
 	public GUI_Shape removeElementAt(int i) {
-		//////////add your code below ///////////
 		GUI_Shape ans = null;
 		if(i>=0 && i<this._shapes.size()){
 			ans = this._shapes.remove(i);
 		}
 		return ans;
-		//////////////////////////////////////////
 	}
 
 	@Override
 	public void addAt(GUI_Shape s, int i) {
-		//////////add your code below ///////////
 		if(i>=0 && i<this._shapes.size()){
 			this._shapes.add(i, s);
 		}
-		//////////////////////////////////////////
 	}
 	@Override
 	public void add(GUI_Shape s) {
@@ -58,33 +54,27 @@ public class ShapeCollection implements GUI_Shape_Collection{
 	}
 	@Override
 	public GUI_Shape_Collection copy() {
-		//////////add your code below ///////////
 		ShapeCollection ans = new ShapeCollection();
 		ans._shapes.addAll(this._shapes);
 		return ans;
-		//////////////////////////////////////////
 	}
 
 	@Override
 	public void sort(Comparator<GUI_Shape> comp) {
 		//////////add your code below ///////////
-
+// TODO sort
 		//////////////////////////////////////////
 	}
 
 	@Override
 	public void removeAll() {
-		//////////add your code below ///////////
-		for(GUI_Shape s : this._shapes){
-			this._shapes.remove(s);
-		}
-		//////////////////////////////////////////
+		_shapes.removeAll(_shapes);
 	}
 
 	@Override
 	public void save(String file) {
 		//////////add your code below ///////////
-
+// TODO save
 		//////////////////////////////////////////
 	}
 
@@ -92,7 +82,7 @@ public class ShapeCollection implements GUI_Shape_Collection{
 	public void load(String file) {
 		////////// add your code below ///////////
 
-
+// TODO load
 		//////////////////////////////////////////
 	}
 

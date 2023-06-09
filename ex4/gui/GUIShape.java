@@ -87,6 +87,5 @@ public class GUIShape implements GUI_Shape{
 	@Override
 	public void setShape(GeoShape g) {
 		// TODO Auto-generated method stub
-		
 	}
 }
