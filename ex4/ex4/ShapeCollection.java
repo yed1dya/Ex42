@@ -18,19 +18,34 @@ import java.util.Comparator;
 public class ShapeCollection implements GUI_Shape_Collection{
 	private ArrayList<GUI_Shape> _shapes;
 
+	/**
+	 * Basic onstructor.
+	 */
 	public ShapeCollection() {
-		_shapes = new ArrayList<GUI_Shape>();
+		_shapes = new ArrayList<>();
 	}
+
+	/**
+	 * @param i - the index of the element
+	 * @return the shape at index 'i'
+	 */
 	@Override
 	public GUI_Shape get(int i) {
 		return _shapes.get(i);
 	}
 
+	/**
+	 * @return the size of the shape collection
+	 */
 	@Override
 	public int size() {
 		return _shapes.size();
 	}
 
+	/**
+	 * @param i - the index of the element to be removed.
+	 * @return the element that was removed
+	 */
 	@Override
 	public GUI_Shape removeElementAt(int i) {
 		GUI_Shape ans = null;
@@ -40,18 +55,31 @@ public class ShapeCollection implements GUI_Shape_Collection{
 		return ans;
 	}
 
+	/**
+	 * @param s - the gui_shape
+	 * @param i - the location (index) in which s should be added
+	 */
 	@Override
 	public void addAt(GUI_Shape s, int i) {
 		if(i>=0 && i<this._shapes.size()){
 			this._shapes.add(i, s);
 		}
 	}
+
+	/**
+	 * adds shape to collection
+	 * @param s - the gui_shape
+	 */
 	@Override
 	public void add(GUI_Shape s) {
 		if(s!=null && s.getShape()!=null) {
 			_shapes.add(s);
 		}
 	}
+
+	/**
+	 * @return a deep copy of the collection
+	 */
 	@Override
 	public GUI_Shape_Collection copy() {
 		ShapeCollection ans = new ShapeCollection();
@@ -66,6 +94,9 @@ public class ShapeCollection implements GUI_Shape_Collection{
 		//////////////////////////////////////////
 	}
 
+	/**
+	 * empties the collection
+	 */
 	@Override
 	public void removeAll() {
 		_shapes.removeAll(_shapes);
@@ -86,13 +117,16 @@ public class ShapeCollection implements GUI_Shape_Collection{
 		//////////////////////////////////////////
 	}
 
+	/**
+	 * @return a string representing the collection
+	 */
 	@Override
 	public String toString() {
-		String ans = "";
+		StringBuilder ans = new StringBuilder();
 		for(int i=0;i<size();i=i+1) {
-			ans += this.get(i);
+			ans.append(this.get(i));
 		}
-		return ans;
+		return ans.toString();
 	}
 
 
