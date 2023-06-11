@@ -19,7 +19,7 @@ public class ShapeCollection implements GUI_Shape_Collection{
 	private ArrayList<GUI_Shape> _shapes;
 
 	/**
-	 * Basic onstructor.
+	 * Basic constructor.
 	 */
 	public ShapeCollection() {
 		_shapes = new ArrayList<>();

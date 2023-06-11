@@ -98,7 +98,6 @@ public class GUIShape implements GUI_Shape{
 	@Override
 	public void setTag(int tag) {
 		_tag = tag;
-		
 	}
 
 	/**
@@ -113,6 +112,7 @@ public class GUIShape implements GUI_Shape{
 	 * @return a string representing the shape
 	 */
 	@Override
+	// TODO check how to write color
 	public String toString() {
 		return "GUIShape,"+_color.getRGB()+","+_fill+","+_tag+","+this.getShape();
 	}
