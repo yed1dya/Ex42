@@ -136,7 +136,7 @@ public class Ex4 implements Ex4_GUI {
 					y = {rp[0].y(), rp[1].y(), rp[2].y(), rp[3].y()};
 			if(isFill) {
 				StdDraw_Ex4.filledPolygon(x, y);
-            }else {
+			}else {
 				StdDraw_Ex4.polygon(x, y);
 			}
 		}
@@ -238,20 +238,18 @@ public class Ex4 implements Ex4_GUI {
 		}
 		if(_mode.equals("Polygon")) {
 			if(_gs==null) {
+				System.out.println("gs==null, _poly: "+ _poly);
 				_poly = new Polygon_2D();
 				_poly.add(p);
+				System.out.println(_poly);
 				_p1 = new Point_2D(p);
-				_gs = new GUIShape(_poly, this._fill, this._color, _tag);
+//				_gs = new GUIShape(_poly, this._fill, this._color, _tag);
 			}
-			else {
-				_poly.add(p);
-				_gs.setColor(_color);
-				_gs.setFilled(_fill);
-				_gs = new GUIShape(_poly, this._fill, this._color, _tag);
-				_tag++;
-				this._shapes.add(_gs);
-				drawShapes();
-			}
+			_poly.add(p);
+//				_gs.setColor(_color);
+//				_gs.setFilled(_fill);
+//				_gs = new GUIShape(_poly, this._fill, this._color, _tag);
+//				_tag++;
 		}
 		if(_mode.equals("Move")) {
 			if(_p1==null) {_p1 = new Point_2D(p);}
@@ -313,6 +311,63 @@ public class Ex4 implements Ex4_GUI {
 			select(p);
 		}
 		drawShapes();
+	}
+
+	public void mouseRightClicked(Point_2D p) {
+		if(printRightClick || printAll){System.out.println("right click!");}
+		if(_mode.equals("Polygon")) {
+			_poly.add(p);
+			_gs = new GUIShape(_poly, this._fill, this._color, _tag);
+			_tag++;
+			this._shapes.add(_gs);
+			_p1 = null;
+			_gs = null;
+		}
+		drawShapes();
+	}
+	public void mouseMoved(MouseEvent e) {
+		if(_p1!=null) {
+			double x1 = StdDraw_Ex4.mouseX();
+			double y1 = StdDraw_Ex4.mouseY();
+			Point_2D p = new Point_2D(x1,y1);
+			GeoShape gs = null;
+			//System.out.println("M: "+x1+","+y1);
+			if(_mode.equals("Circle")) {
+				double r = _p1.distance(p);
+				gs = new Circle_2D(_p1,r);
+			}
+			if(_mode.equals("Polygon")) {
+				Polygon_2D poly = _poly;
+				// remove last point from polygon:
+				Point_2D[] pa = poly.getAllPoints();
+				if(pa.length>0) {
+					// remove last point from pa:
+					pa[pa.length-1] = new Point_2D(p);
+				}
+				poly = new Polygon_2D();
+				for(Point_2D p1 : pa) {
+					poly.add(p1);
+				}
+				gs = new Polygon_2D(_poly);
+				_poly = new Polygon_2D();
+				for(Point_2D p1 : pa) {
+					_poly.add(p1);
+				}
+			}
+			if(_mode.equals("Segment")) {
+				gs = new Segment_2D(_p1,p);
+			}
+			if(_mode.equals("Rect")) {
+				gs = new Rect_2D(_p1,p);
+			}
+			if(_mode.equals("Triangle")) {
+				Polygon_2D poly = (Polygon_2D) _gs.getShape();
+				gs = new Polygon_2D(poly);
+				poly.add(p);
+			}
+			_gs = new GUIShape(gs,false, Color.pink, 0);
+			drawShapes();
+		}
 	}
 
 	private void select(Point_2D p) {
@@ -400,62 +455,6 @@ public class Ex4 implements Ex4_GUI {
 		}
 	}
 
-	public void mouseRightClicked(Point_2D p) {
-		if(printRightClick || printAll){System.out.println("right click!");}
-		if(_mode.equals("Polygon")) {
-			_poly.add(p);
-			_gs = new GUIShape(_poly, this._fill, this._color, _tag);
-			_tag++;
-			this._shapes.add(_gs);
-			_p1 = null;
-			_gs = null;
-		}
-		drawShapes();
-	}
-	public void mouseMoved(MouseEvent e) {
-		if(_p1!=null) {
-			double x1 = StdDraw_Ex4.mouseX();
-			double y1 = StdDraw_Ex4.mouseY();
-			Point_2D p = new Point_2D(x1,y1);
-			GeoShape gs = null;
-			//System.out.println("M: "+x1+","+y1);
-			if(_mode.equals("Circle")) {
-				double r = _p1.distance(p);
-				gs = new Circle_2D(_p1,r);
-			}
-			if(_mode.equals("Polygon")) {
-				Polygon_2D poly = (Polygon_2D) _gs.getShape();
-				// remove last point from polygon:
-				Point_2D[] pa = poly.getAllPoints();
-				if(pa.length>0) {
-                    // remove last point from pa:
-					pa[pa.length-1] = new Point_2D(p);
-                }
-				poly = new Polygon_2D();
-				for(Point_2D p1 : pa) {
-					poly.add(p1);
-				}
-				gs = new Polygon_2D(poly);
-				_poly = new Polygon_2D();
-				for(Point_2D p1 : pa) {
-                    _poly.add(p1);
-                }
-			}
-			if(_mode.equals("Segment")) {
-				gs = new Segment_2D(_p1,p);
-            }
-			if(_mode.equals("Rect")) {
-                gs = new Rect_2D(_p1,p);
-            }
-			if(_mode.equals("Triangle")) {
-				Polygon_2D poly = (Polygon_2D) _gs.getShape();
-				gs = new Polygon_2D(poly);
-				poly.add(p);
-            }
-			_gs = new GUIShape(gs,false, Color.pink, 0);
-			drawShapes();
-		}
-	}
 	@Override
 	public GUI_Shape_Collection getShape_Collection() {
 		// TODO Auto-generated method stub
