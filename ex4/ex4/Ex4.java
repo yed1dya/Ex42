@@ -215,33 +215,10 @@ public class Ex4 implements Ex4_GUI {
 				_gs = null;
 			}
 		}
-		if(_mode.equals("Triangle")) {
+		if(_mode.equals("Polygon") || _mode.equals("Triangle")) {
 			if(_gs==null) {
 				_poly = new Polygon_2D();
 				_poly.add(p);
-				_p1 = new Point_2D(p);
-				_gs = new GUIShape(_poly, this._fill, this._color, _tag);
-			}
-			else {
-				_poly.add(p);
-				if(_poly.getAllPoints().length==3) {
-					_gs.setColor(_color);
-					_gs.setFilled(_fill);
-					_gs = new GUIShape(_poly, this._fill, this._color, _tag);
-					_tag++;
-					this._shapes.add(_gs);
-					_p1 = null;
-					_gs = null;
-				}
-				drawShapes();
-			}
-		}
-		if(_mode.equals("Polygon")) {
-			if(_gs==null) {
-				System.out.println("gs==null, _poly: "+ _poly);
-				_poly = new Polygon_2D();
-				_poly.add(p);
-				System.out.println(_poly);
 				_p1 = new Point_2D(p);
 //				_gs = new GUIShape(_poly, this._fill, this._color, _tag);
 			}
@@ -250,6 +227,29 @@ public class Ex4 implements Ex4_GUI {
 //				_gs.setFilled(_fill);
 //				_gs = new GUIShape(_poly, this._fill, this._color, _tag);
 //				_tag++;
+		}
+		if(_mode.equals("Triangle")) {
+			if(_poly.getAllPoints().length==4) {
+				System.out.println("3 points");
+				_gs = new GUIShape(_poly, _fill, _color, _tag);
+				_tag++;
+				this._shapes.add(_gs);
+				_p1 = null;
+				_gs = null;
+			}
+//			if(_gs!=null){
+//				_poly.add(p);
+//				if(_poly.getAllPoints().length==3) {
+//					_gs.setColor(_color);
+//					_gs.setFilled(_fill);
+//					_gs = new GUIShape(_poly, this._fill, this._color, _tag);
+//					_tag++;
+//					this._shapes.add(_gs);
+//					_p1 = null;
+//					_gs = null;
+//				}
+//				drawShapes();
+//			}
 		}
 		if(_mode.equals("Move")) {
 			if(_p1==null) {_p1 = new Point_2D(p);}
@@ -336,7 +336,7 @@ public class Ex4 implements Ex4_GUI {
 				double r = _p1.distance(p);
 				gs = new Circle_2D(_p1,r);
 			}
-			if(_mode.equals("Polygon")) {
+			if(_mode.equals("Polygon") || _mode.equals("Triangle")) {
 				Polygon_2D poly = _poly;
 				// remove last point from polygon:
 				Point_2D[] pa = poly.getAllPoints();
@@ -361,9 +361,9 @@ public class Ex4 implements Ex4_GUI {
 				gs = new Rect_2D(_p1,p);
 			}
 			if(_mode.equals("Triangle")) {
-				Polygon_2D poly = (Polygon_2D) _gs.getShape();
-				gs = new Polygon_2D(poly);
-				poly.add(p);
+//				Polygon_2D poly = (Polygon_2D) _gs.getShape();
+//				gs = new Polygon_2D(poly);
+//				poly.add(p);
 			}
 			_gs = new GUIShape(gs,false, Color.pink, 0);
 			drawShapes();
