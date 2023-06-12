@@ -147,7 +147,7 @@ public class Rect_2D implements GeoShape {
 	@Override
 	public String toString(){
 		String ans = Arrays.toString(this.points());
-		return "Circle_2D, "+ans.substring(1, ans.length()-1);
+		return "Rect_2D, "+ans.substring(1, ans.length()-1);
 	}
 
 	/**

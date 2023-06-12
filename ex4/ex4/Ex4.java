@@ -8,6 +8,7 @@ import exe.ex4.gui.GUI_Shape;
 import exe.ex4.gui.StdDraw_Ex4;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.Comparator;
 
 /**
  *
@@ -20,7 +21,7 @@ import java.awt.event.MouseEvent;
  */
 public class Ex4 implements Ex4_GUI {
 	private  GUI_Shape_Collection _shapes = new ShapeCollection();
-	private GUI_Shape _gs, _seg;
+	private GUI_Shape _gs;
 	private  Color _color = Color.blue;
 	private  boolean _fill = false;
 	private  String _mode = "";
@@ -61,6 +62,11 @@ public class Ex4 implements Ex4_GUI {
 		return _winEx4;
 	}
 
+	private String type(GUI_Shape g){
+		System.out.println(g.getShape().toString().trim());
+		return g.getShape().toString().trim();
+	}
+
 	public void drawShapes() {
 		// clear the window:
 		StdDraw_Ex4.clear();
@@ -69,6 +75,7 @@ public class Ex4 implements Ex4_GUI {
 		}
 		if(_mode.equals("Anti")){
 			anti();
+			_mode = "";
 		}
 		if(_mode.equals("All")){
 			all();
@@ -79,6 +86,39 @@ public class Ex4 implements Ex4_GUI {
 		if(_mode.equals("Info")){
 			info();
 		}
+		Comparator<GUI_Shape> areaComparator = Comparator.comparingDouble(o -> o.getShape().area());
+		if(_mode.equals("ByArea")){
+			_shapes.sort(areaComparator);
+		}
+		Comparator<GUI_Shape> antiAreaComparator = areaComparator.reversed();
+		if(_mode.equals("ByAntiArea")){
+			_shapes.sort(antiAreaComparator);
+		}
+		Comparator<GUI_Shape> perimeterComparator = Comparator.comparingDouble(o -> o.getShape().perimeter());
+		if(_mode.equals("ByPerimeter")){
+			_shapes.sort(perimeterComparator);
+		}
+		Comparator<GUI_Shape> antiPerimeterComparator = perimeterComparator.reversed();
+		if(_mode.equals("ByAntiPerimeter")){
+			_shapes.sort(antiPerimeterComparator);
+		}
+		Comparator<GUI_Shape> toStringComparator = (Comparator.comparing(this::type));
+		if(_mode.equals("ByToString")){
+            _shapes.sort(toStringComparator);
+        }
+		Comparator<GUI_Shape> antiToStringComparator = toStringComparator.reversed();
+		if(_mode.equals("ByAntiToString")){
+            _shapes.sort(antiToStringComparator);
+        }
+		Comparator<GUI_Shape> tagComparator = Comparator.comparingInt(GUI_Shape::getTag);
+		if(_mode.equals("ByTag")){
+			_shapes.sort(tagComparator);
+		}
+		Comparator<GUI_Shape> antiTagComparator = tagComparator.reversed();
+		if(_mode.equals("ByAntiTag")){
+            _shapes.sort(antiTagComparator);
+        }
+
 		// draw the shapes saved in collection:
 		for(int i=0;i<_shapes.size();i++) {
 			GUI_Shape sh = _shapes.get(i);
@@ -86,7 +126,6 @@ public class Ex4 implements Ex4_GUI {
 		}
 		// draw the current shape, if exists:
 		if(_gs!=null) {drawShape(_gs);}
-		if(_seg!=null) {drawShape(_seg);}
 		StdDraw_Ex4.show();
 	}
 	private static void drawShape(GUI_Shape g) {
@@ -177,7 +216,6 @@ public class Ex4 implements Ex4_GUI {
 
 	public void mouseClicked(Point_2D p) {
 		if(printMode || printAll){System.out.println("Mode: "+_mode+"  "+p);}
-		_seg=null;
 		// actions according to selected mode:
 		if(_mode.equals("Segment")) {
 			if(_gs==null) {
@@ -208,7 +246,7 @@ public class Ex4 implements Ex4_GUI {
 			}
 		}
 		if(_mode.equals("Rect")) {
-			if(_gs==null) {
+			if(_p1==null) {
 				// first click - save the point
 				_p1 = new Point_2D(p);
 			}
@@ -223,17 +261,20 @@ public class Ex4 implements Ex4_GUI {
 			}
 		}
 		if(_mode.equals("Polygon") || _mode.equals("Triangle")) {
-			if(_gs==null) {
+			if(_gs==null || _poly == null) {
 				// first click - save the point, create the shape
 				_poly = new Polygon_2D();
 				_poly.add(p);
 				_p1 = new Point_2D(p);
 			}
-			_poly.add(p);
+			if(_poly!=null) {
+				_poly.add(p);
+			}
+
 		}
 		if(_mode.equals("Triangle")) {
 			// limits the number of points:
-			if(_poly.getAllPoints().length==4) {
+			if(_poly!=null && _poly.getAllPoints().length==4) {
 				System.out.println("3 points");
 				_gs = new GUIShape(_poly, _fill, _color, _tag);
 				_tag++;
@@ -301,9 +342,9 @@ public class Ex4 implements Ex4_GUI {
 					degrees += 360;
 				}
 				if(printDegrees || printAll){System.out.println("degrees: "+degrees);}
-				// call rotate method
+				// call rotate method:
 				rotate(degrees);
-				// reset point
+				// reset point:
 				_p1 = null;
 			}
 		}
@@ -315,7 +356,7 @@ public class Ex4 implements Ex4_GUI {
 
 	public void mouseRightClicked(Point_2D p) {
 		if(printRightClick || printAll){System.out.println("right click!");}
-		if(_mode.equals("Polygon")) {
+		if(_mode.equals("Polygon") && _poly!=null) {
 			// add clicked point to polygon:
 			_poly.add(p);
 			_gs = new GUIShape(_poly, this._fill, this._color, _tag);
@@ -338,7 +379,7 @@ public class Ex4 implements Ex4_GUI {
 				double r = _p1.distance(p);
 				gs = new Circle_2D(_p1,r);
 			}
-			if(_mode.equals("Polygon") || _mode.equals("Triangle")) {
+			if((_mode.equals("Polygon") || _mode.equals("Triangle")) && _poly!=null) {
 				// set polygon according to current point
 				Polygon_2D poly = _poly;
 				// remove last point from polygon:

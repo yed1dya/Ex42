@@ -89,9 +89,7 @@ public class ShapeCollection implements GUI_Shape_Collection{
 
 	@Override
 	public void sort(Comparator<GUI_Shape> comp) {
-		//////////add your code below ///////////
-// TODO sort
-		//////////////////////////////////////////
+		_shapes.sort(comp);
 	}
 
 	/**

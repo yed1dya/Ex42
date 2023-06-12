@@ -36,7 +36,6 @@ public class Ex4_main {
 		GUI_Shape gs3 = new GUIShape(poly1, true, Color.blue, 3);
 		String s = gs1.toString();
 		//GUI_Shape g1 = new GUIShape(s);
-		System.out.println(s);
 		//gs3.setSelected(true);
 		shapes.add(gs1);
 		shapes.add(gs2);
