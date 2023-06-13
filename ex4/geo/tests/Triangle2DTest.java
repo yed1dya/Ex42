@@ -1,9 +1,9 @@
 // 207404997
 package exe.ex4.geo.tests;
+
 import exe.ex4.geo.Point_2D;
 import exe.ex4.geo.Triangle_2D;
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 public class Triangle2DTest {

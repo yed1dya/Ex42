@@ -1,3 +1,4 @@
+// 207404997
 package exe.ex4.ex4;
 
 import exe.ex4.geo.*;
@@ -7,7 +8,6 @@ import exe.ex4.geo.Polygon_2D;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -101,6 +101,10 @@ public class ShapeCollection implements GUI_Shape_Collection{
 		_shapes.removeAll(_shapes);
 	}
 
+	/**
+	 * saves the collection to given file. source: chatGPT, StackOverflow
+	 * @param file - the file name in which this collection will be saved.
+	 */
 	@Override
 	public void save(String file) {
 		try {
@@ -116,12 +120,18 @@ public class ShapeCollection implements GUI_Shape_Collection{
 		}
 	}
 
+	/**
+	 * loads a collection from given file. source: chatGPT, StackOverflow
+	 * @param file - the name of the text file to create a gui shape file from.
+	 */
 	@Override
 	public void load(String file) {
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			String line;
 			GeoShape g;
 			while ((line = reader.readLine()) != null) {
+				// split each line by ',':
+				// for each shape, parse the info and add shape to collection:
 				String[] s = line.split(",");
 				if(s[4].equals("Circle_2D")){
 					double x = Double.parseDouble(s[5]),
@@ -180,9 +190,8 @@ public class ShapeCollection implements GUI_Shape_Collection{
 					_shapes.add(new GUIShape(g, f, c, t));
 				}
 			}
-			System.out.println(line);
 		} catch (IOException e) {
-			System.out.println("An error occurred while reading the file.");
+			System.out.println("ERROR:\n"+e+"\nCould not read file");
 			e.printStackTrace();
 		}
 	}
@@ -198,6 +207,4 @@ public class ShapeCollection implements GUI_Shape_Collection{
 		}
 		return ans.toString();
 	}
-
-
 }

@@ -6,9 +6,6 @@ import exe.ex4.gui.Ex4_GUI;
 import exe.ex4.gui.GUIShape;
 import exe.ex4.gui.GUI_Shape;
 import exe.ex4.gui.StdDraw_Ex4;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -16,7 +13,7 @@ import java.util.Comparator;
 
 /**
  *
- * This class is a simple "inter-layer" connecting (aka simplifying) the
+ * This class is a simple "interlayer" connecting (aka simplifying) the
  * StdDraw with the Map class.
  * Written for 101 java course it uses simple static functions to allow a 
  * "Singleton-like" implementation.
@@ -26,16 +23,13 @@ import java.util.Comparator;
 public class Ex4 extends Component implements Ex4_GUI {
 	private  GUI_Shape_Collection _shapes = new ShapeCollection();
 	private GUI_Shape _gs;
-	private  Color _color = Color.blue;
+	private  Color _color = Color.BLUE;
 	private  boolean _fill = false;
 	private  String _mode = "";
 	private Point_2D _p1, _rotateCenter;
 	private Polygon_2D _poly;
-	private Rect_2D _rect;
 	private static int _tag=0;
 	private static Ex4 _winEx4 = null;
-
-	boolean printMode = false, printDegrees = true, printRightClick = false, printAll = true;
 
 	private Ex4() {
 		init(null);
@@ -45,20 +39,22 @@ public class Ex4 extends Component implements Ex4_GUI {
 		}
 		else {_shapes = s.copy();} //should be s.copy();}
 		_gs = null;
-		_color = Color.blue;
+		_color = Color.BLUE;
 		_fill = true;
 		_mode = "";
 		// last point clicked
 		_p1 = null;
 		_poly = null;
 	}
+
+	// shows the UI window:
 	public void show(double d) {
-		// UI
 		StdDraw_Ex4.setScale(0,d);
 		StdDraw_Ex4.show();
 		drawShapes();
 	}
-	// makes so there can only be one instance
+
+	// makes so there can only be one instance at any time:
 	public static Ex4 getInstance() {
 		if(_winEx4 ==null) {
 			_winEx4 = new Ex4();
@@ -66,13 +62,15 @@ public class Ex4 extends Component implements Ex4_GUI {
 		return _winEx4;
 	}
 
+	// helper function for sort by string:
 	private String type(GUI_Shape g){
 		return g.getShape().toString().trim();
 	}
 
 	public void drawShapes() {
-		// clear the window:
+		// clear the window each time:
 		StdDraw_Ex4.clear();
+		// each mode calls the appropriate function; see below:
 		if(_mode.equals("Remove")) {
 			remove();
 		}
@@ -89,6 +87,7 @@ public class Ex4 extends Component implements Ex4_GUI {
 		if(_mode.equals("Info")){
 			System.out.println(getInfo());
 		}
+		// comparators for sorting; using lambda expression: (got help from classmate on understanding lambdas)
 		Comparator<GUI_Shape> areaComparator = Comparator.comparingDouble(o -> o.getShape().area());
 		if(_mode.equals("ByArea")){
 			_shapes.sort(areaComparator);
@@ -129,36 +128,37 @@ public class Ex4 extends Component implements Ex4_GUI {
 		}
 		// draw the current shape, if exists:
 		if(_gs!=null) {drawShape(_gs);}
+		// function for actually showing the UI window:
 		StdDraw_Ex4.show();
 	}
+
+	// main method for drawing a shape:
 	private static void drawShape(GUI_Shape g) {
-		// main method for drawing the shapes:
 		StdDraw_Ex4.setPenColor(g.getColor());
 		// 'selected' shapes should be gray:
 		if(g.isSelected()) {StdDraw_Ex4.setPenColor(Color.gray);}
 		GeoShape gs = g.getShape();
 		boolean isFill = g.isFilled();
-		// use the appropriate StdDraw method; (triangle uses polygon):
-		if(gs instanceof Polygon_2D){
-			Polygon_2D p = (Polygon_2D)gs;
+		// use the appropriate StdDraw method; (triangle is saved as an instance of polygon):
+		if(gs instanceof Polygon_2D p){
 			Point_2D[] points = p.getAllPoints();
-			// make arrays of x and y coordinates
+			// make arrays of x and y coordinates:
 			int len = points.length;
-			double[] xVals = new double[len];
-			double[] yVals = new double[len];
+			double[] xValues = new double[len];
+			double[] yValues = new double[len];
+			// set x,y values in array:
 			for(int i = 0; i < len; i++){
-				xVals[i] = points[i].x();
-				yVals[i] = points[i].y();
+				xValues[i] = points[i].x();
+				yValues[i] = points[i].y();
 			}
 			if(isFill){
-				StdDraw_Ex4.filledPolygon(xVals, yVals);
+				StdDraw_Ex4.filledPolygon(xValues, yValues);
 			}
 			else {
-				StdDraw_Ex4.polygon(xVals, yVals);
+				StdDraw_Ex4.polygon(xValues, yValues);
 			}
 		}
-		if(gs instanceof Circle_2D) {
-			Circle_2D c = (Circle_2D)gs;
+		if(gs instanceof Circle_2D c) {
 			Point_2D cen = c.getCenter();
 			double rad = c.getRadius();
 			if(isFill) {
@@ -168,13 +168,11 @@ public class Ex4 extends Component implements Ex4_GUI {
 				StdDraw_Ex4.circle(cen.x(), cen.y(), rad);
 			}
 		}
-		if(gs instanceof Segment_2D) {
-			Segment_2D s = (Segment_2D) gs;
+		if(gs instanceof Segment_2D s) {
 			Point_2D p1 = s.get_p1(), p2 = s.get_p2();
 			StdDraw_Ex4.line(p1.x(), p1.y(), p2.x(), p2.y());
 		}
-		if(gs instanceof Rect_2D) {
-			Rect_2D r = (Rect_2D)gs;
+		if(gs instanceof Rect_2D r) {
 			Point_2D[] rp = r.points();
 			double[] x = {rp[0].x(), rp[1].x(), rp[2].x(), rp[3].x()},
 					y = {rp[0].y(), rp[1].y(), rp[2].y(), rp[3].y()};
@@ -218,9 +216,8 @@ public class Ex4 extends Component implements Ex4_GUI {
 		drawShapes();
 	}
 
-
+	// actions performed on every mouse click:
 	public void mouseClicked(Point_2D p) {
-		if(printMode || printAll){System.out.println("Mode: "+_mode+"  "+p);}
 		// actions according to selected mode:
 		if(_mode.equals("Segment")) {
 			if(_gs==null) {
@@ -257,7 +254,7 @@ public class Ex4 extends Component implements Ex4_GUI {
 			}
 			else {
 				// second click - set the rectangle, clear the saved point
-				_rect = new Rect_2D(_p1, p);
+				Rect_2D _rect = new Rect_2D(_p1, p);
 				_gs = new GUIShape(_rect, this._fill, this._color, _tag);
 				_tag++;
 				this._shapes.add(_gs);
@@ -267,18 +264,20 @@ public class Ex4 extends Component implements Ex4_GUI {
 		}
 		if(_mode.equals("Polygon") || _mode.equals("Triangle")) {
 			if(_gs==null || _poly == null) {
-				// first click - save the point, create the shape
+				// first click - create the shape, save the point:
 				_poly = new Polygon_2D();
 				_poly.add(p);
 				_p1 = new Point_2D(p);
 			}
+			// every other click - add the point to the shape:
 			if(_poly!=null) {
 				_poly.add(p);
 			}
 
 		}
 		if(_mode.equals("Triangle")) {
-			// limits the number of points:
+			// limits the number of points; draws shape at 3 points:
+			// (because in polygon, first point is saved twice. so triangle will have 4 points, first 2 are duplicates)
 			if(_poly!=null && _poly.getAllPoints().length==4) {
 				System.out.println("3 points");
 				_gs = new GUIShape(_poly, _fill, _color, _tag);
@@ -346,7 +345,6 @@ public class Ex4 extends Component implements Ex4_GUI {
 				while (degrees<0){
 					degrees += 360;
 				}
-				if(printDegrees || printAll){System.out.println("degrees: "+degrees);}
 				// call rotate method:
 				rotate(degrees);
 				// reset point:
@@ -359,10 +357,10 @@ public class Ex4 extends Component implements Ex4_GUI {
 		drawShapes();
 	}
 
+	// on mouse right click, set polygon:
 	public void mouseRightClicked(Point_2D p) {
-		if(printRightClick || printAll){System.out.println("right click!");}
 		if(_mode.equals("Polygon") && _poly!=null) {
-			// add clicked point to polygon:
+			// add clicked point to polygon and save the shape:
 			_poly.add(p);
 			_gs = new GUIShape(_poly, this._fill, this._color, _tag);
 			_tag++;
@@ -372,6 +370,8 @@ public class Ex4 extends Component implements Ex4_GUI {
 		}
 		drawShapes();
 	}
+
+	// actions performed on every mouse move; this is what draws the pink outline while user is drawing shapes:
 	public void mouseMoved(MouseEvent e) {
 		if(_p1!=null) {
 			// get mouse x,y coordinates and set point:
@@ -441,18 +441,12 @@ public class Ex4 extends Component implements Ex4_GUI {
 			GUI_Shape s = _shapes.get(i);
 			GeoShape g = s.getShape();
 			if(s.isSelected() && g!=null) {
-				_shapes.removeElementAt(i);
-				i--;
+				// if removed a shape, array size is decreased; decrease 'i' by 1:
+				_shapes.removeElementAt(i--);
 			}
 		}
 	}
-	private void info(){
-		// prints shape information:
-		for(int i=0;i<_shapes.size();i++) {
-			GUI_Shape s = _shapes.get(i);
-			System.out.println(s.toString());
-		}
-	}
+
 	private void all() {
 		// select all:
 		for(int i=0;i<_shapes.size();i++) {
@@ -467,9 +461,9 @@ public class Ex4 extends Component implements Ex4_GUI {
 			s.setSelected(false);
 		}
 	}
-	/*
-		use the methods in Point_2D to change the selected shapes:
-	 */
+
+	// use the methods in Point_2D to change the selected shapes:
+	// uses the methods in each shape class:
 	private void move() {
 		for(int i=0;i<_shapes.size();i++) {
 			GUI_Shape s = _shapes.get(i);
@@ -512,16 +506,18 @@ public class Ex4 extends Component implements Ex4_GUI {
 		}
 	}
 
-	// saves shapes to file; source: chatGPT
+	// open window to select file to save to; source: course Git repository
 	public void save(){
 		FileDialog chooser = new FileDialog(StdDraw_Ex4.getFrame(), "Save to Text file", FileDialog.SAVE);
 		chooser.setVisible(true);
 		String filename = chooser.getFile();
+		System.out.println("filename: "+chooser.getDirectory() + File.separator + chooser.getFile());
 		if (filename != null) {
 			_shapes.save(chooser.getDirectory() + File.separator + chooser.getFile());
 		}
 	}
 
+	// open window to select file to load; source: course Git repository
 	public void load(){
 		_shapes.removeAll();
 		FileDialog chooser = new FileDialog(StdDraw_Ex4.getFrame(), "Load from Text file", FileDialog.LOAD);
