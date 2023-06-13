@@ -12,7 +12,7 @@ public class Ex4_main {
 
 	public static void main(String[] args) {
 		simpleShapes();
-		loadDemo();
+//		loadDemo();
 	}
 
 	// Two simple GeoShapes
@@ -44,13 +44,13 @@ public class Ex4_main {
 		ex4.show();
 	}
 	// Loads a file from file a0.txt (Circles only).
-	public static void loadDemo() {
-		Ex4 ex4 = Ex4.getInstance();
-		GUI_Shape_Collection shapes = ex4.getShape_Collection();
-		String file = "a0.txt"; //make sure the file is your working directory.
-		shapes.load(file);
-		ex4.init(shapes);
-		ex4.show();
-	}
+//	public static void loadDemo() {
+//		Ex4 ex4 = Ex4.getInstance();
+//		GUI_Shape_Collection shapes = ex4.getShape_Collection();
+//		String file = "a0.txt"; //make sure the file is your working directory.
+//		shapes.load(file);
+//		ex4.init(shapes);
+//		ex4.show();
+//	}
 
 }

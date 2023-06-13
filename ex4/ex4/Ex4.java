@@ -6,8 +6,12 @@ import exe.ex4.gui.Ex4_GUI;
 import exe.ex4.gui.GUIShape;
 import exe.ex4.gui.GUI_Shape;
 import exe.ex4.gui.StdDraw_Ex4;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.*;
 import java.util.Comparator;
 
 /**
@@ -19,7 +23,7 @@ import java.util.Comparator;
  * @author boaz.benmoshe
  *
  */
-public class Ex4 implements Ex4_GUI {
+public class Ex4 extends Component implements Ex4_GUI {
 	private  GUI_Shape_Collection _shapes = new ShapeCollection();
 	private GUI_Shape _gs;
 	private  Color _color = Color.blue;
@@ -63,7 +67,6 @@ public class Ex4 implements Ex4_GUI {
 	}
 
 	private String type(GUI_Shape g){
-		System.out.println(g.getShape().toString().trim());
 		return g.getShape().toString().trim();
 	}
 
@@ -84,7 +87,7 @@ public class Ex4 implements Ex4_GUI {
 			none();
 		}
 		if(_mode.equals("Info")){
-			info();
+			System.out.println(getInfo());
 		}
 		Comparator<GUI_Shape> areaComparator = Comparator.comparingDouble(o -> o.getShape().area());
 		if(_mode.equals("ByArea")){
@@ -102,22 +105,22 @@ public class Ex4 implements Ex4_GUI {
 		if(_mode.equals("ByAntiPerimeter")){
 			_shapes.sort(antiPerimeterComparator);
 		}
-		Comparator<GUI_Shape> toStringComparator = (Comparator.comparing(this::type));
-		if(_mode.equals("ByToString")){
-            _shapes.sort(toStringComparator);
-        }
-		Comparator<GUI_Shape> antiToStringComparator = toStringComparator.reversed();
+		Comparator<GUI_Shape> antiToStringComparator = (Comparator.comparing(this::type));
 		if(_mode.equals("ByAntiToString")){
-            _shapes.sort(antiToStringComparator);
-        }
+			_shapes.sort(antiToStringComparator);
+		}
+		Comparator<GUI_Shape> toStringComparator = antiToStringComparator.reversed();
+		if(_mode.equals("ByToString")){
+			_shapes.sort(toStringComparator);
+		}
 		Comparator<GUI_Shape> tagComparator = Comparator.comparingInt(GUI_Shape::getTag);
 		if(_mode.equals("ByTag")){
 			_shapes.sort(tagComparator);
 		}
 		Comparator<GUI_Shape> antiTagComparator = tagComparator.reversed();
 		if(_mode.equals("ByAntiTag")){
-            _shapes.sort(antiTagComparator);
-        }
+			_shapes.sort(antiTagComparator);
+		}
 
 		// draw the shapes saved in collection:
 		for(int i=0;i<_shapes.size();i++) {
@@ -210,6 +213,8 @@ public class Ex4 implements Ex4_GUI {
 		if(p.equals("Fill")) {_fill = true; setFill();}
 		if(p.equals("Empty")) {_fill = false; setFill();}
 		if(p.equals("Clear")) {_shapes.removeAll();}
+		if(p.equals("Save")) {save();}
+		if(p.equals("Load")) {load();}
 		drawShapes();
 	}
 
@@ -504,6 +509,26 @@ public class Ex4 implements Ex4_GUI {
 			if(s.isSelected() && g!=null) {
 				g.rotate(_rotateCenter, degrees);
 			}
+		}
+	}
+
+	// saves shapes to file; source: chatGPT
+	public void save(){
+		FileDialog chooser = new FileDialog(StdDraw_Ex4.getFrame(), "Save to Text file", FileDialog.SAVE);
+		chooser.setVisible(true);
+		String filename = chooser.getFile();
+		if (filename != null) {
+			_shapes.save(chooser.getDirectory() + File.separator + chooser.getFile());
+		}
+	}
+
+	public void load(){
+		_shapes.removeAll();
+		FileDialog chooser = new FileDialog(StdDraw_Ex4.getFrame(), "Load from Text file", FileDialog.LOAD);
+		chooser.setVisible(true);
+		String filename = chooser.getFile();
+		if (filename != null) {
+			_shapes.load(chooser.getDirectory() + File.separator + chooser.getFile());
 		}
 	}
 
