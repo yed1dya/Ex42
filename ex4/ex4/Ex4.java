@@ -9,6 +9,7 @@ import exe.ex4.gui.StdDraw_Ex4;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -140,6 +141,24 @@ public class Ex4 extends Component implements Ex4_GUI {
 		GeoShape gs = g.getShape();
 		boolean isFill = g.isFilled();
 		// use the appropriate StdDraw method; (triangle is saved as an instance of polygon):
+		if(gs instanceof Triangle_2D){
+			Point_2D[] points = ((Triangle_2D) gs).getAllPoints();
+			// make arrays of x and y coordinates:
+			int len = points.length;
+			double[] xValues = new double[len];
+			double[] yValues = new double[len];
+			// set x,y values in array:
+			for(int i = 0; i < len; i++){
+				xValues[i] = points[i].x();
+				yValues[i] = points[i].y();
+			}
+			if(isFill){
+				StdDraw_Ex4.filledPolygon(xValues, yValues);
+			}
+			else {
+				StdDraw_Ex4.polygon(xValues, yValues);
+			}
+		}
 		if(gs instanceof Polygon_2D p){
 			Point_2D[] points = p.getAllPoints();
 			// make arrays of x and y coordinates:
@@ -279,8 +298,11 @@ public class Ex4 extends Component implements Ex4_GUI {
 			// limits the number of points; draws shape at 3 points:
 			// (because in polygon, first point is saved twice. so triangle will have 4 points, first 2 are duplicates)
 			if(_poly!=null && _poly.getAllPoints().length==4) {
-				System.out.println("3 points");
-				_gs = new GUIShape(_poly, _fill, _color, _tag);
+				Point_2D[] t = _poly.getAllPoints();
+				System.out.println("tri: "+Arrays.toString(_poly.getAllPoints()));
+				Triangle_2D tri = new Triangle_2D(t[0], t[1], t[2]);
+				_gs = new GUIShape(tri, _fill, _color, _tag);
+				System.out.println(_gs);
 				_tag++;
 				this._shapes.add(_gs);
 				_p1 = null;
@@ -373,6 +395,7 @@ public class Ex4 extends Component implements Ex4_GUI {
 
 	// actions performed on every mouse move; this is what draws the pink outline while user is drawing shapes:
 	public void mouseMoved(MouseEvent e) {
+
 		if(_p1!=null) {
 			// get mouse x,y coordinates and set point:
 			double x1 = StdDraw_Ex4.mouseX();

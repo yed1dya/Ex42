@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import java.awt.*;
+import java.io.*;
 import java.util.Comparator;
 
 public class ShapeCollectionTest {
@@ -133,6 +134,37 @@ public class ShapeCollectionTest {
         assertNotEquals(0, myCollection.size());
         myCollection.removeAll();
         assertEquals(0, myCollection.size());
+    }
+
+    @Test
+    // tests the save and load functions:
+    public void testSaveAndLoad() throws IOException {
+        String fileName = "saveTest.txt";
+        // save to file:
+        myCollection.save(fileName);
+        File file = new File(fileName);
+        // check that the file exists:
+        assertTrue(file.exists());
+        // get the content of the file
+        FileReader reader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String line;
+        StringBuilder content = new StringBuilder();
+        while ((line = bufferedReader.readLine()) != null) {
+            content.append(line);
+            content.append("\n");
+        }
+        bufferedReader.close();
+        reader.close();
+        // check the content of the file with the expected content
+        String expected = g[0].toString()+"\n"+g[1].toString()+"\n"+g[2].toString()+"\n"+g[3].toString()+"\n"+g[4].toString()+"\n";
+        assertEquals(expected, content.toString());
+        // empty collection:
+        myCollection.removeAll();
+        assertEquals(0, myCollection.size());
+        // load to collection:
+        myCollection.load(fileName);
+        assertEquals(expected, content.toString());
     }
 
     @Test
