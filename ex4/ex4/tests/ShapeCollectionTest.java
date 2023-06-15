@@ -38,7 +38,7 @@ public class ShapeCollectionTest {
     Comparator<GUI_Shape> antiTagComparator = tagComparator.reversed();
 
     @BeforeEach
-    public void poly(){
+    public void createPoly(){
         for(Point_2D p : p){
             pol.add(p);
         }
